@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Sprites/UI/Alma_chao.png" type="Texture" id=1]
+
+[node name="Alma_chao" type="Sprite"]
+position = Vector2( 430.192, 229.842 )
+scale = Vector2( 0.8, 0.8 )
+texture = ExtResource( 1 )
+centered = false
+hframes = 4
+frame = 3

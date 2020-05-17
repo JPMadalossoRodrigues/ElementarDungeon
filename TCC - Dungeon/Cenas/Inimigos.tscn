@@ -1,0 +1,35 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Sprites/Seres/Inimigos.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Sprite
+
+
+"
+
+[node name="Inimigos" type="Sprite"]
+visible = false
+position = Vector2( 177, 103 )
+texture = ExtResource( 1 )
+centered = false
+vframes = 2
+hframes = 8
+frame = 2
+script = SubResource( 1 )
+
+[node name="HPFundo" type="ColorRect" parent="."]
+margin_top = -2.0
+margin_right = 32.0
+color = Color( 1, 0, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HPBar" type="ColorRect" parent="."]
+margin_top = -2.0
+margin_right = 32.0
+color = Color( 0, 1, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

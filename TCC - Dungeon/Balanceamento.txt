@@ -1,0 +1,57 @@
+PLAYER
+
+-Vida 50
+-Dano 10
+-Esquiva 15
+
+-------------------------------------------------------------------------------------------------------------------
+ALMAS
+
+Alma fogo: 
+  Seus ataques tem 30% de chance de queimar seus inimigos durante 5 turnos; Inimigos queimados ganham 50% mais dano
+
+Alma Ar:
+ Ganha 30% de chance de causar ataque duplo durante 5 turnos
+
+Alma Terra:
+ Ganha um escudo que bloquei 25% do dano tomado por 5 turnos
+
+Alma Agua:
+ Regenera 3 de vida por turno durante 5 turnos
+-------------------------------------------------------------------------------------------------------------------
+INIMIGOS
+
+Inimigo fogo:
+-Vida 25
+-Dano 7
+-Esquiva 15
+
+
+Inimigo ar:
+-Vida 30
+-Dano 3
+-Esquiva 30
+
+
+Inimigo Terra:
+-Vida 35
+-Dano 5
+-Esquiva 0
+
+
+Inimigo de Agua:
+-Vida 30
+-Dano 5
+-Esquiva 15
+-------------------------------------------------------------------------------------------------------------------
+ARMAS
+
+-Espada inicial: Sem efeitos extra
+
+-Cajados elementais: Aumenta a duração da alma do seu elemento; Consumir 25 almas
+
+-Machado elementais: Aumenta o dano critico do seu elemento e diminui a penalidade do mesmo; Acerte 50 criticos do seu elemento
+
+-Espada avatar: ganha o poder de todas as outras armas; Consumir 50 almas de cada elemento e acertar 100 criticos de cada elemento
+
+
