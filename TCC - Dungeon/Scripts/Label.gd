@@ -12,6 +12,8 @@ func set_text(_txt, _isCrit):
 func _on_Timer_timeout():
 	$Label.text = str("")
 
+func update():
+	$".".position.y += $".".position.y  + 5
 
 
 func clear():

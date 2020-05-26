@@ -1,3 +1,53 @@
-[gd_scene format=2]
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scripts/Menu.gd" type="Script" id=1]
 
 [node name="Menu" type="Node2D"]
+position = Vector2( -1.47018, -72.0391 )
+script = ExtResource( 1 )
+
+[node name="Novo Jogo" type="ToolButton" parent="."]
+margin_left = 3.67548
+margin_top = 111.734
+margin_right = 78.6755
+margin_bottom = 133.734
+rect_scale = Vector2( 1.77049, 1.79376 )
+action_mode = 0
+text = "Novo Jogo"
+align = 2
+
+[node name="Tutorial" type="ToolButton" parent="."]
+margin_left = -4.76837e-007
+margin_top = 170.542
+margin_right = 75.0
+margin_bottom = 192.542
+rect_scale = Vector2( 1.63093, 1.82818 )
+action_mode = 0
+text = "Tutorial"
+align = 0
+
+[node name="Manual" type="ToolButton" parent="."]
+margin_left = -2.33273
+margin_top = 231.192
+margin_right = 72.6673
+margin_bottom = 253.192
+rect_scale = Vector2( 1.63093, 1.82818 )
+action_mode = 0
+text = "Manual"
+align = 0
+
+[node name="Sair" type="ToolButton" parent="."]
+margin_left = -2.94035
+margin_top = 292.46
+margin_right = 72.0596
+margin_bottom = 314.46
+rect_scale = Vector2( 2.11259, 2.26177 )
+action_mode = 0
+text = "Sair"
+align = 0
+[connection signal="button_down" from="Novo Jogo" to="." method="_on_Novo_Jogo_button_down"]
+[connection signal="button_down" from="Tutorial" to="." method="_on_Tutorial_button_down"]
+[connection signal="button_down" from="Manual" to="." method="_on_Tutorial_button_down"]
+[connection signal="button_down" from="Manual" to="." method="_on_Manual_button_down"]
+[connection signal="button_down" from="Sair" to="." method="_on_Novo_Jogo_button_down"]
+[connection signal="button_down" from="Sair" to="." method="_on_Sair_button_down"]

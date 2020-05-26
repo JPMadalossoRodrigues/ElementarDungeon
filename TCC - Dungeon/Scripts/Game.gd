@@ -17,6 +17,7 @@ enum Elementos { Terra, Agua, Ar, Fogo}
 
 onready var tile_map = $Mapa
 onready var visibilidade_map = $Visibilidade
+onready var fog_map = $FOG
 onready var player = $Player
 
 
@@ -34,11 +35,11 @@ var turnos = 0
 var enemy_pathfinding
 
 var player_tile
-var player_hp_max = 50
+var player_hp_max = 100
 var player_hp = player_hp_max
 var player_dano = 10
-var player_esquiva = 15
-var player_morto = false
+var player_esquiva = 20
+var player_morto = true
 
 class Alma:
 	var sprite_node
@@ -80,7 +81,7 @@ class Inimigo extends Reference:
 				hp_atual = hp_full
 				dano = 5
 				esquiva = 0
-				elemento = Elementos.Fogo
+				elemento = Elementos.Terra
 			1:
 				hp_full = 30
 				hp_atual = hp_full
@@ -91,7 +92,7 @@ class Inimigo extends Reference:
 				hp_full = 30
 				hp_atual = hp_full
 				dano = 3
-				esquiva = 30
+				esquiva = 20
 				elemento = Elementos.Ar
 			3:
 				hp_full = 25
@@ -113,7 +114,45 @@ class Inimigo extends Reference:
 			dead = true
 			var alma = Alma.new(_game,elemento,tile)
 			_game.almasChao.append(alma)
-		
+	
+	func damage_player(dmg, _game):
+		var temp_esquiva = randi()%100
+		if _game.turnos>0:
+			if _game.almaAtiva == Elementos.Ar:
+				temp_esquiva = temp_esquiva - 10
+				_game.turnos = _game.turnos - 1
+		if temp_esquiva > _game.player_esquiva:
+			var dano = dmg
+			if _game.turnos>0:
+				if _game.almaAtiva == Elementos.Terra:
+					_game.turnos = _game.turnos - 1
+					dano = dmg/ 2
+			var txt = LabelScene.instance()
+			var PosX = _game.player_tile.x * TILE_SIZE 
+			var PosY = _game.player_tile.y * TILE_SIZE  + 5
+			txt.position = Vector2(PosX, PosY)
+			txt.set_text(dano, 1)
+			_game.add_child(txt)
+			_game.player_hp = max(0 , _game.player_hp-dano)
+			_game.get_node('UI/HP').rect_size.x = 148 * _game.player_hp/_game.player_hp_max
+			if _game.player_hp == 0:
+				_game.player_morto = true
+				_game.get_node('UI/Lose').visible = true
+			if _game.turnos>0:
+				if _game.almaAtiva == Elementos.Fogo:
+					var temp = dano/5
+					if temp > 1:
+						temp = 1
+					take_damage(self,temp)
+					_game.turnos = _game.turnos - 1
+		else:
+			var txt = LabelScene.instance()
+			var PosX = _game.player_tile.x * TILE_SIZE 
+			var PosY = _game.player_tile.y * TILE_SIZE  + 5
+			txt.position = Vector2(PosX, PosY)
+			txt.set_text("miss", 1)
+			_game.add_child(txt)
+	
 	func act(_game):
 		if !sprite_node.visible:
 			var dir = randi()%4
@@ -140,7 +179,7 @@ class Inimigo extends Reference:
 			if path.size() > 1:
 				var move_tile = Vector2(path[1].x,path[1].y)
 				if move_tile == _game.player_tile:
-					_game.damage_player(dano)
+					damage_player(dano, _game)
 				else:
 					var block = false
 					for enemy in _game.inimigos:
@@ -164,26 +203,34 @@ func _input(event):
 	if !event.is_pressed():
 		return
 	if event.is_action("ui_end"):
-		get_tree().quit()
-	
+		if!$UI/Pause.visible:
+			$UI/Pause.visible = true
+			player_morto = true
+		else:
+			$UI/Pause.visible = false
+			player_morto = false
+	if event.is_action("ui_enter")  && $UI/Carta.visible:
+		player_morto = false
+		$UI/Carta.visible = false
 	if(!player_morto):
 		if event.is_action("ui_space"):
-			match(almasColetadas[0].Elemento):
-				Elementos.Terra:
-					almaAtiva = Elementos.Terra
-					turnos = 5
-				Elementos.Agua:
-					almaAtiva = Elementos.Agua
-					turnos = 5
-				Elementos.Ar:
-					almaAtiva = Elementos.Ar
-					turnos = 5
-				Elementos.Fogo:
-					almaAtiva = Elementos.Fogo
-					turnos = 5
-			$CanvasLayer/UiPlayer.set_frame(almasColetadas[0].Elemento + 1)
-			almasColetadas.erase(almasColetadas[0])
-			atualiza_almas()
+			if(!almasColetadas.empty()):
+				match(almasColetadas[0].Elemento):
+					Elementos.Terra:
+						almaAtiva = Elementos.Terra
+						turnos = 5
+					Elementos.Agua:
+						almaAtiva = Elementos.Agua
+						turnos = 5
+					Elementos.Ar:
+						almaAtiva = Elementos.Ar
+						turnos = 5
+					Elementos.Fogo:
+						almaAtiva = Elementos.Fogo
+						turnos = 5
+				$UI/UiPlayer.set_frame(almasColetadas[0].Elemento + 1)
+				almasColetadas.erase(almasColetadas[0])
+				atualiza_almas()
 	if event.is_action("ui_left"):
 		try_move(-1, 0)
 	elif event.is_action("ui_right"):
@@ -211,43 +258,34 @@ func try_move(_x, _y):
 				for enemy in inimigos:
 					if enemy.tile.x == x && enemy.tile.y == y:
 						var dano = player_dano
-						var num_ataques = 1
 						var esquiva = randi()%100
 						var IsCrit = 1
-						if turnos > 0:
-							match (almaAtiva):
-								Elementos.Ar:
-									num_ataques = 2
-									turnos = turnos - 1
-								Elementos.Fogo:
-									dano = player_dano * 2
-									turnos = turnos - 1
 						if esquiva > enemy.esquiva:
-							match enemy.elemento:
-								Elementos.Terra:
-									if almasColetadas[0] == Elementos.Fogo:
-										dano = dano *1.5
-										IsCrit = 2
-								Elementos.Terra:
-									if almasColetadas[0] == Elementos.Fogo:
-										dano = dano *1.5
-										IsCrit = 2
-								Elementos.Terra:
-									if almasColetadas[0] == Elementos.Fogo:
-										dano = dano *1.5
-										IsCrit = 2
-								Elementos.Terra:
-									if almasColetadas[0] == Elementos.Fogo:
-										dano = dano *1.5
-										IsCrit = 2
-							for ataques in num_ataques:
-								var txt = LabelScene.instance()
-								var PosX = enemy.tile.x * TILE_SIZE 
-								var PosY = enemy.tile.y * TILE_SIZE  + 5
-								txt.position = Vector2(PosX, PosY)
-								txt.set_text(player_dano, IsCrit)
-								add_child(txt)
-								enemy.take_damage(self,player_dano)
+							if !almasColetadas.empty():
+								match enemy.elemento:
+									Elementos.Terra:
+										if almasColetadas[0].Elemento == Elementos.Fogo:
+											dano = dano *1.5
+											IsCrit = 2
+									Elementos.Fogo:
+										if almasColetadas[0].Elemento == Elementos.Agua:
+											dano = dano *1.5
+											IsCrit = 2
+									Elementos.Agua:
+										if almasColetadas[0].Elemento == Elementos.Ar:
+											dano = dano *1.5
+											IsCrit = 2
+									Elementos.Ar:
+										if almasColetadas[0].Elemento == Elementos.Terra:
+											dano = dano *1.5
+											IsCrit = 2
+							var txt = LabelScene.instance()
+							var PosX = enemy.tile.x * TILE_SIZE 
+							var PosY = enemy.tile.y * TILE_SIZE  + 5
+							txt.position = Vector2(PosX, PosY)
+							txt.set_text(dano, IsCrit)
+							add_child(txt)
+							enemy.take_damage(self,dano)
 							if enemy.dead:
 								enemy.remove()
 								inimigos.erase(enemy)
@@ -267,26 +305,25 @@ func try_move(_x, _y):
 						player.set_frame(0)
 					player_tile = Vector2(x, y)
 					for alma in almasChao:
-						if alma.tile.x == x && alma.tile.y == y:
+						if alma.tile.x == player_tile.x && alma.tile.y == player_tile.y:
 							if almasColetadas.size() < 10:
 								almasColetadas.append(alma)
 								almasChao.erase(alma)
 								alma.remove()
-								atualiza_almas()
-
+					atualiza_almas()
 			Tile.Porta:
 				set_tile(x, y, Tile.Chao)
 			Tile.Escada:
-				if(level_atual == 5):
-					level_atual = 1
-					cenario_atual += 1
-				else:
-					level_atual +=1
-				if level_atual < LEVEL_SIZE.size() && cenario_atual < CENARIOS_SIZE:
-					cria_level()
-				else:
-					player_morto = true
-					$CanvasLayer/Win.visible = true
+					if(level_atual == 5):
+						level_atual = 1
+						cenario_atual += 1
+					else:
+						level_atual +=1
+					if level_atual < LEVEL_SIZE.size() && cenario_atual < CENARIOS_SIZE:
+						cria_level()
+					else:
+							player_morto = true
+							$UI/Win.visible = true
 		for enemy in inimigos:
 					enemy.act(self)
 		
@@ -294,22 +331,28 @@ func try_move(_x, _y):
 			if almaAtiva == Elementos.Agua:
 				turnos = turnos - 1
 				if player_hp < player_hp_max:
+					var regen = (player_hp_max - player_hp)/5
+					if regen< 1:
+						regen = 1
 					var txt = LabelScene.instance()
 					var PosX = player_tile.x * TILE_SIZE 
 					var PosY = player_tile.y * TILE_SIZE  + 5
 					txt.position = Vector2(PosX, PosY)
-					txt.set_text(min(player_hp + player_hp_max/20 , player_hp_max), 3)
+					txt.set_text(regen, 3)
 					add_child(txt)
-					player_hp = min(player_hp + player_hp_max/20 , player_hp_max)
-					$CanvasLayer/HP.rect_size.x = 148 * player_hp/player_hp_max
+					player_hp = player_hp + regen
+				if player_hp > player_hp_max:
+					player_hp = player_hp_max
+				$UI/HP.rect_size.x = 148 * player_hp/player_hp_max
 		else:
-			$CanvasLayer/UiPlayer.set_frame(0)
+			$UI/UiPlayer.set_frame(0)
 		call_deferred("atualiza")
 
 func atualiza():
 	player.position = player_tile *  TILE_SIZE
 	var player_centro = Vector2((player_tile.x + 0.5) * TILE_SIZE,(player_tile.y + 0.5) * TILE_SIZE)
 	var space_state = get_world_2d().direct_space_state
+	
 	for x in range (level_size.x):
 		for y in range(level_size.y):
 			if visibilidade_map.get_cell(x,y) == 0:
@@ -320,13 +363,25 @@ func atualiza():
 				var ocultar = space_state.intersect_ray(player_centro, ponto_teste)
 				if !ocultar || (ocultar.position - ponto_teste).length() < 1:
 					visibilidade_map.set_cell(x,y,-1)
+	for x in range (level_size.x):
+		for y in range(level_size.y):
+			var x_dir = 1 if x < player_tile.x else -1 
+			var y_dir = 1 if y < player_tile.y else -1
+			var ponto_teste = Vector2((x + 0.5) * TILE_SIZE,(y + 0.5) * TILE_SIZE) + Vector2(x_dir,y_dir) * TILE_SIZE/2
+				
+			var ocultar = space_state.intersect_ray(player_centro, ponto_teste)
+			if !ocultar || (ocultar.position - ponto_teste).length() < 1:
+				fog_map.set_cell(x,y,-1)
+			else:
+				fog_map.set_cell(x,y,0)
 	for enemy in inimigos:
 		enemy.sprite_node.position = enemy.tile * TILE_SIZE
-		if !enemy.sprite_node.visible:
-			var enemy_center = Vector2((enemy.tile.x+ 0.5) * TILE_SIZE,(enemy.tile.y + 0.5) * TILE_SIZE)
-			var oculto = space_state.intersect_ray(player_centro, enemy_center)
-			if !oculto:
-				enemy.sprite_node.visible = true
+		var enemy_center = Vector2((enemy.tile.x+ 0.5) * TILE_SIZE,(enemy.tile.y + 0.5) * TILE_SIZE)
+		var oculto = space_state.intersect_ray(player_centro, enemy_center)
+		if !oculto:
+			enemy.sprite_node.visible = true
+		else:
+			enemy.sprite_node.visible = false
 
 func cria_level():
 	salas.clear()
@@ -351,6 +406,8 @@ func cria_level():
 	
 	var tiles_livres = [Rect2(Vector2(2,2), level_size - Vector2(4,4))]
 	var num_salas = LEVEL_ROOM[level_atual]
+# warning-ignore:unused_variable
+# warning-ignore:unused_variable
 	for i in range(num_salas):
 		add_sala(tiles_livres)
 		if tiles_livres.empty():
@@ -380,7 +437,7 @@ func cria_level():
 			if enemy.tile.x == x && enemy.tile.y == y:
 				blocked = true
 		if !blocked:
-			var enemy =  Inimigo.new(self,randi()%3,Vector2(x,y))
+			var enemy =  Inimigo.new(self,randi()%4,Vector2(x,y))
 			inimigos.append(enemy)
 
 func add_sala(_tiles_livres):
@@ -582,58 +639,72 @@ func novo_caminho(tile):
 	for points in points_to_connect:
 		enemy_pathfinding.connect_points(points,novo_ponto)
 
-func damage_player(dmg):
-	var dano = dmg
-	if turnos>0:
-		if almaAtiva == Elementos.Terra:
-			turnos = turnos - 1
-			dano = dmg/ 2
-	var txt = LabelScene.instance()
-	var PosX = player_tile.x * TILE_SIZE 
-	var PosY = player_tile.y * TILE_SIZE  + 5
-	txt.position = Vector2(PosX, PosY)
-	txt.set_text(dano, 1)
-	add_child(txt)
-	player_hp = max(0 , player_hp-dano)
-	$CanvasLayer/HP.rect_size.x = 148 * player_hp/player_hp_max
-	if player_hp == 0:
-		player_morto = true
-		$CanvasLayer/Lose.visible = true
-
 func atualiza_almas():
-	$CanvasLayer/Alma1.set_frame(0)
-	$CanvasLayer/Alma2.set_frame(0)
-	$CanvasLayer/Alma3.set_frame(0)
-	$CanvasLayer/Alma4.set_frame(0)
-	$CanvasLayer/Alma5.set_frame(0)
-	$CanvasLayer/Alma6.set_frame(0)
-	$CanvasLayer/Alma7.set_frame(0)
-	$CanvasLayer/Alma8.set_frame(0)
-	$CanvasLayer/Alma9.set_frame(0)
-	$CanvasLayer/Alma10.set_frame(0)
+	$UI/Alma1.set_frame(0)
+	$UI/Alma2.set_frame(0)
+	$UI/Alma3.set_frame(0)
+	$UI/Alma4.set_frame(0)
+	$UI/Alma5.set_frame(0)
+	$UI/Alma6.set_frame(0)
+	$UI/Alma7.set_frame(0)
+	$UI/Alma8.set_frame(0)
+	$UI/Alma9.set_frame(0)
+	$UI/Alma10.set_frame(0)
 	
 	var temp = 0
-	
+	if almasColetadas.empty():
+		print("RECARGA/ALMA")
+		print("NULL")
+		
 	for alma in almasColetadas:
+		if !almasColetadas.empty():
+			print("RECARGA/ALMA")
+			print(alma.Elemento)
+		else:
+			print("RECARGA/ALMA")
+			print("NULL")
+		print("RECARGA/temp")
+		print(temp)
 		match(temp):
 			0:
-				$CanvasLayer/Alma1.set_frame(alma.Elemento + 1)
+				$UI/Alma1.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			1:
-				$CanvasLayer/Alma2.set_frame(alma.Elemento + 1)
+				print("Entrou")
+				$UI/Alma2.set_frame(alma.Elemento + 1)
+				print($UI/Alma2.get_frame())
+				temp = temp + 1
 			2:
-				$CanvasLayer/Alma3.set_frame(alma.Elemento + 1)
+				$UI/Alma3.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			3:
-				$CanvasLayer/Alma4.set_frame(alma.Elemento + 1)
+				$UI/Alma4.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			4:
-				$CanvasLayer/Alma5.set_frame(alma.Elemento + 1)
+				$UI/Alma5.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			5:
-				$CanvasLayer/Alma6.set_frame(alma.Elemento + 1)
+				$UI/Alma6.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			6:
-				$CanvasLayer/Alma7.set_frame(alma.Elemento + 1)
+				$UI/Alma7.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			7:
-				$CanvasLayer/Alma8.set_frame(alma.Elemento + 1)
+				$UI/Alma8.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			8:
-				$CanvasLayer/Alma9.set_frame(alma.Elemento + 1)
+				$UI/Alma9.set_frame(alma.Elemento + 1)
+				temp = temp + 1
 			9:
-				$CanvasLayer/Alma10.set_frame(alma.Elemento + 1)
-		temp = temp + 1
+				$UI/Alma10.set_frame(alma.Elemento + 1)
+				temp = temp + 1
+
+func _on_Menu_button_down():
+	get_tree().change_scene("res://Cenas/Menu.tscn")
+
+func _on_Quit_button_down():
+	get_tree().quit()
+	
+func _on_Voltar_button_down():
+	$UI/Pause.visible = false
+	player_morto = false

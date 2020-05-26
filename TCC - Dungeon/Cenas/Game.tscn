@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://Scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://Sprites/Cenario/Cemiterio/Parede.png" type="Texture" id=2]
@@ -6,22 +6,19 @@
 [ext_resource path="res://Sprites/Cenario/Cemiterio/Porta.png" type="Texture" id=4]
 [ext_resource path="res://Sprites/Cenario/Cemiterio/Externo.png" type="Texture" id=5]
 [ext_resource path="res://Sprites/Cenario/Cemiterio/Escada.png" type="Texture" id=6]
-[ext_resource path="res://Sprites/Cenario/Dungeon/Parede.png" type="Texture" id=7]
-[ext_resource path="res://Sprites/Cenario/Dungeon/Chao.png" type="Texture" id=8]
-[ext_resource path="res://Sprites/Cenario/Dungeon/Porta.png" type="Texture" id=9]
-[ext_resource path="res://Sprites/Cenario/Dungeon/Externo.png" type="Texture" id=10]
-[ext_resource path="res://Sprites/Cenario/Dungeon/Escada.png" type="Texture" id=11]
-[ext_resource path="res://Sprites/Cenario/Visibilidade/Preto.png" type="Texture" id=12]
-[ext_resource path="res://Sprites/Seres/Player.png" type="Texture" id=13]
-[ext_resource path="res://Sprites/UI/UiPlayer.png" type="Texture" id=14]
-[ext_resource path="res://Sprites/UI/Ui_AlmaGrande.png" type="Texture" id=15]
-[ext_resource path="res://Sprites/UI/oie_transparent.png" type="Texture" id=16]
+[ext_resource path="res://Sprites/Cenario/Visibilidade/fog.png" type="Texture" id=7]
+[ext_resource path="res://Sprites/Cenario/Visibilidade/Preto.png" type="Texture" id=8]
+[ext_resource path="res://Sprites/Seres/Player.png" type="Texture" id=9]
+[ext_resource path="res://Sprites/UI/UiPlayer.png" type="Texture" id=10]
+[ext_resource path="res://Sprites/UI/Ui_AlmaGrande.png" type="Texture" id=11]
+[ext_resource path="res://Sprites/UI/Ui_AlmaPequena.png" type="Texture" id=12]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 
-[sub_resource type="ConvexPolygonShape2D" id=2]
-points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+[sub_resource type="NavigationPolygon" id=2]
+vertices = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ) ]
 
 [sub_resource type="ConvexPolygonShape2D" id=3]
 points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
@@ -29,13 +26,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 [sub_resource type="ConvexPolygonShape2D" id=4]
 points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 
-[sub_resource type="ConvexPolygonShape2D" id=5]
-points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
-
-[sub_resource type="ConvexPolygonShape2D" id=6]
-points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
-
-[sub_resource type="TileSet" id=7]
+[sub_resource type="TileSet" id=5]
 0/name = "Parede.png 0"
 0/texture = ExtResource( 2 )
 0/tex_offset = Vector2( 0, 0 )
@@ -60,6 +51,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 1/tile_mode = 0
 1/occluder_offset = Vector2( 0, 0 )
 1/navigation_offset = Vector2( 0, 0 )
+1/navigation = SubResource( 2 )
 1/shapes = [  ]
 1/z_index = 0
 2/name = "Porta.png 2"
@@ -74,7 +66,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 "autotile_coord": Vector2( 0, 0 ),
 "one_way": false,
 "one_way_margin": 1.0,
-"shape": SubResource( 2 ),
+"shape": SubResource( 3 ),
 "shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
 } ]
 2/z_index = 0
@@ -90,7 +82,7 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 "autotile_coord": Vector2( 0, 0 ),
 "one_way": false,
 "one_way_margin": 1.0,
-"shape": SubResource( 3 ),
+"shape": SubResource( 4 ),
 "shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
 } ]
 3/z_index = 0
@@ -104,78 +96,11 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 4/navigation_offset = Vector2( 0, 0 )
 4/shapes = [  ]
 4/z_index = 0
-5/name = "Parede.png 5"
-5/texture = ExtResource( 7 )
-5/tex_offset = Vector2( 0, 0 )
-5/modulate = Color( 1, 1, 1, 1 )
-5/region = Rect2( 0, 0, 32, 32 )
-5/tile_mode = 0
-5/occluder_offset = Vector2( 0, 0 )
-5/navigation_offset = Vector2( 0, 0 )
-5/shapes = [ {
-"autotile_coord": Vector2( 0, 0 ),
-"one_way": false,
-"one_way_margin": 1.0,
-"shape": SubResource( 4 ),
-"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
-} ]
-5/z_index = 0
-6/name = "Chao.png 6"
-6/texture = ExtResource( 8 )
-6/tex_offset = Vector2( 0, 0 )
-6/modulate = Color( 1, 1, 1, 1 )
-6/region = Rect2( 0, 0, 32, 32 )
-6/tile_mode = 0
-6/occluder_offset = Vector2( 0, 0 )
-6/navigation_offset = Vector2( 0, 0 )
-6/shapes = [  ]
-6/z_index = 0
-7/name = "Porta.png 7"
-7/texture = ExtResource( 9 )
-7/tex_offset = Vector2( 0, 0 )
-7/modulate = Color( 1, 1, 1, 1 )
-7/region = Rect2( 0, 0, 32, 32 )
-7/tile_mode = 0
-7/occluder_offset = Vector2( 0, 0 )
-7/navigation_offset = Vector2( 0, 0 )
-7/shapes = [ {
-"autotile_coord": Vector2( 0, 0 ),
-"one_way": false,
-"one_way_margin": 1.0,
-"shape": SubResource( 5 ),
-"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
-} ]
-7/z_index = 0
-8/name = "Externo.png 8"
-8/texture = ExtResource( 10 )
-8/tex_offset = Vector2( 0, 0 )
-8/modulate = Color( 1, 1, 1, 1 )
-8/region = Rect2( 0, 0, 32, 32 )
-8/tile_mode = 0
-8/occluder_offset = Vector2( 0, 0 )
-8/navigation_offset = Vector2( 0, 0 )
-8/shapes = [ {
-"autotile_coord": Vector2( 0, 0 ),
-"one_way": false,
-"one_way_margin": 1.0,
-"shape": SubResource( 6 ),
-"shape_transform": Transform2D( 1, 0, 0, 1, 0, 0 )
-} ]
-8/z_index = 0
-9/name = "Escada.png 9"
-9/texture = ExtResource( 11 )
-9/tex_offset = Vector2( 0, 0 )
-9/modulate = Color( 1, 1, 1, 1 )
-9/region = Rect2( 0, 0, 32, 32 )
-9/tile_mode = 0
-9/occluder_offset = Vector2( 0, 0 )
-9/navigation_offset = Vector2( 0, 0 )
-9/shapes = [  ]
-9/z_index = 0
 
-[sub_resource type="TileSet" id=8]
-0/name = "Preto.png 0"
-0/texture = ExtResource( 12 )
+[sub_resource type="TileSet" id=6]
+resource_local_to_scene = true
+0/name = "unnamed.png 0"
+0/texture = ExtResource( 7 )
 0/tex_offset = Vector2( 0, 0 )
 0/modulate = Color( 1, 1, 1, 1 )
 0/region = Rect2( 0, 0, 32, 32 )
@@ -185,36 +110,144 @@ points = PoolVector2Array( 0, 0, 32, 0, 32, 32, 0, 32 )
 0/shapes = [  ]
 0/z_index = 0
 
-[sub_resource type="GDScript" id=9]
+[sub_resource type="TileSet" id=7]
+0/name = "Preto.png 0"
+0/texture = ExtResource( 8 )
+0/tex_offset = Vector2( 0, 0 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 32, 32 )
+0/tile_mode = 0
+0/occluder_offset = Vector2( 0, 0 )
+0/navigation_offset = Vector2( 0, 0 )
+0/shapes = [  ]
+0/z_index = 0
+
+[sub_resource type="GDScript" id=8]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
 
 [node name="Mapa" type="TileMap" parent="."]
-tile_set = SubResource( 7 )
+tile_set = SubResource( 5 )
+cell_size = Vector2( 32, 32 )
+format = 1
+
+[node name="FOG" type="TileMap" parent="."]
+tile_set = SubResource( 6 )
 cell_size = Vector2( 32, 32 )
 format = 1
 
 [node name="Visibilidade" type="TileMap" parent="."]
-tile_set = SubResource( 8 )
+tile_set = SubResource( 7 )
 cell_size = Vector2( 32, 32 )
 format = 1
 
 [node name="Player" type="Sprite" parent="."]
-position = Vector2( 302.123, 166.131 )
-texture = ExtResource( 13 )
+position = Vector2( 308.585, 166.131 )
+texture = ExtResource( 9 )
 centered = false
 hframes = 2
 frame = 1
-script = SubResource( 9 )
+script = SubResource( 8 )
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 position = Vector2( 16, 16 )
 current = true
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="UI" type="CanvasLayer" parent="."]
 
-[node name="Lose" type="ColorRect" parent="CanvasLayer"]
+[node name="FundoHP" type="ColorRect" parent="UI"]
+margin_left = 74.0
+margin_top = 312.0
+margin_right = 222.0
+margin_bottom = 335.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="HP" type="ColorRect" parent="UI"]
+margin_left = 72.0
+margin_top = 311.0
+margin_right = 220.0
+margin_bottom = 335.0
+color = Color( 0.290196, 1, 0, 1 )
+
+[node name="UiPlayer" type="Sprite" parent="UI"]
+position = Vector2( 114, 320.15 )
+texture = ExtResource( 10 )
+hframes = 5
+
+[node name="Alma1" type="Sprite" parent="UI"]
+position = Vector2( 79.8779, 350 )
+texture = ExtResource( 11 )
+offset = Vector2( -39.4629, -32.8418 )
+hframes = 5
+frame = 1
+
+[node name="Alma2" type="Sprite" parent="UI"]
+position = Vector2( 80, 350 )
+scale = Vector2( 1.00651, 0.987711 )
+texture = ExtResource( 12 )
+offset = Vector2( -5.00255, -5.41876 )
+hframes = 5
+frame = 1
+
+[node name="Alma3" type="Sprite" parent="UI"]
+position = Vector2( 80, 350 )
+texture = ExtResource( 12 )
+offset = Vector2( 8.03479, -5.26178 )
+hframes = 5
+frame = 1
+
+[node name="Alma4" type="Sprite" parent="UI"]
+position = Vector2( 80, 350 )
+texture = ExtResource( 12 )
+offset = Vector2( 21.0509, -5.41876 )
+hframes = 5
+frame = 1
+
+[node name="Alma5" type="Sprite" parent="UI"]
+position = Vector2( 80, 350 )
+texture = ExtResource( 12 )
+offset = Vector2( 34.0882, -5.26178 )
+hframes = 5
+frame = 1
+
+[node name="Alma6" type="Sprite" parent="UI"]
+position = Vector2( 131.946, 350 )
+texture = ExtResource( 12 )
+offset = Vector2( -5.00255, -5.41876 )
+hframes = 5
+frame = 1
+
+[node name="Alma7" type="Sprite" parent="UI"]
+position = Vector2( 118.96, 350 )
+texture = ExtResource( 12 )
+offset = Vector2( 21.0509, -5.41876 )
+hframes = 5
+frame = 1
+
+[node name="Alma8" type="Sprite" parent="UI"]
+position = Vector2( 118.96, 349.865 )
+texture = ExtResource( 12 )
+offset = Vector2( 34.0882, -5.26178 )
+hframes = 5
+frame = 1
+
+[node name="Alma9" type="Sprite" parent="UI"]
+position = Vector2( 158.054, 349.865 )
+texture = ExtResource( 12 )
+offset = Vector2( 8.03479, -5.26178 )
+hframes = 5
+frame = 1
+
+[node name="Alma10" type="Sprite" parent="UI"]
+position = Vector2( 171.041, 349.865 )
+texture = ExtResource( 12 )
+offset = Vector2( 8.03479, -5.26178 )
+hframes = 5
+frame = 1
+
+[node name="Lose" type="ColorRect" parent="UI"]
+editor/display_folded = true
 visible = false
 anchor_left = 1.0
 anchor_top = 1.0
@@ -230,7 +263,34 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Win" type="ColorRect" parent="CanvasLayer"]
+[node name="Menu" type="ToolButton" parent="UI/Lose"]
+margin_left = 4.52776
+margin_top = 3.32134
+margin_right = 91.5278
+margin_bottom = 25.3213
+rect_scale = Vector2( -0.021402, -0.0354209 )
+action_mode = 0
+text = "Main  Menu"
+
+[node name="Quit" type="ToolButton" parent="UI/Lose"]
+margin_left = 4.65264
+margin_top = 2.26907
+margin_right = 39.6526
+margin_bottom = 24.2691
+rect_scale = Vector2( -0.032432, -0.0258492 )
+action_mode = 0
+text = "Sair"
+
+[node name="Label" type="Label" parent="UI/Lose"]
+margin_left = 5.37669
+margin_top = 4.20751
+margin_right = 85.3767
+margin_bottom = 18.2075
+rect_scale = Vector2( -0.0310841, -0.0637544 )
+text = "Voce perdeu"
+
+[node name="Win" type="ColorRect" parent="UI"]
+editor/display_folded = true
 visible = false
 anchor_left = 1.0
 anchor_top = 1.0
@@ -246,91 +306,138 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="FundoHP" type="ColorRect" parent="CanvasLayer"]
-margin_left = 74.0
-margin_top = 312.0
-margin_right = 222.0
-margin_bottom = 335.0
+[node name="Menu" type="ToolButton" parent="UI/Win"]
+margin_left = 4.52776
+margin_top = 3.32134
+margin_right = 91.5278
+margin_bottom = 25.3213
+rect_scale = Vector2( -0.021402, -0.0354209 )
+action_mode = 0
+text = "Main  Menu"
+
+[node name="Quit" type="ToolButton" parent="UI/Win"]
+margin_left = 4.65264
+margin_top = 2.26907
+margin_right = 39.6526
+margin_bottom = 24.2691
+rect_scale = Vector2( -0.032432, -0.0258492 )
+action_mode = 0
+text = "Sair"
+
+[node name="Label2" type="Label" parent="UI/Win"]
+margin_left = 5.37669
+margin_top = 4.20751
+margin_right = 85.3767
+margin_bottom = 18.2075
+rect_scale = Vector2( -0.0310841, -0.0637544 )
+text = "Voce Ganhou"
+
+[node name="Carta" type="ColorRect" parent="UI"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -48.8347
+margin_top = -44.963
+margin_right = -41.8347
+margin_bottom = -38.963
+rect_scale = Vector2( -75.3051, -44.5794 )
+color = Color( 0.631373, 0.635294, 0, 0.92549 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label2" type="Label" parent="UI/Carta"]
+modulate = Color( 0, 0, 0, 1 )
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 920.0
+margin_bottom = 162.0
+rect_scale = Vector2( -0.00761008, -0.0368086 )
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "
+Ola bravo cavaleiro,
+Sou o rei de Valor e preciso que voce cumpra uma missao muito importante. 
+O cemiterio em que voce se encontra esta amaldicoado, a fonte dessa maldicao vem da cripta onde foi enterrada a bruxa Ketsia. 
+Preciso que voce destrua a cripta para retomar o equilibrio da natureza e trazer a paz ao reino. 
+Nessa aventura voce enfrentaras diversos perigospara te ajudar leve com voce a espada sagrada.
+
+
+Pressione ENTER para prosseguir"
+align = 1
+autowrap = true
+clip_text = true
+
+[node name="Pause" type="ColorRect" parent="UI"]
+visible = false
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 6.59235
+margin_top = 2.19742
+margin_right = 13.5923
+margin_bottom = 8.19742
+rect_scale = Vector2( -92.2994, -60.2024 )
+color = Color( 1, 1, 1, 0.894118 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ColorRect" type="ColorRect" parent="UI/Pause"]
+margin_right = 40.0
+margin_bottom = 40.0
 color = Color( 0, 0, 0, 1 )
 
-[node name="HP" type="ColorRect" parent="CanvasLayer"]
-margin_left = 72.0
-margin_top = 311.0
-margin_right = 220.0
-margin_bottom = 335.0
-color = Color( 0.290196, 1, 0, 1 )
+[node name="Menu" type="ToolButton" parent="UI/Pause/ColorRect"]
+margin_left = 4.7389
+margin_top = 4.00954
+margin_right = 119.739
+margin_bottom = 26.0095
+rect_scale = Vector2( -0.021402, -0.0354209 )
+action_mode = 0
+text = "  Menu Principal"
 
-[node name="UiPlayer" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 114, 320.15 )
-texture = ExtResource( 14 )
-hframes = 5
+[node name="Voltar" type="ToolButton" parent="UI/Pause/ColorRect"]
+margin_left = 4.70482
+margin_top = 3.03573
+margin_right = 65.7048
+margin_bottom = 25.0357
+rect_scale = Vector2( -0.021402, -0.0354209 )
+action_mode = 0
+text = "   Voltar"
+align = 0
 
-[node name="Alma1" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 79.8779, 350 )
-texture = ExtResource( 15 )
-offset = Vector2( -39.4629, -32.8418 )
-hframes = 5
-frame = 1
+[node name="Quit" type="ToolButton" parent="UI/Pause/ColorRect"]
+margin_left = 4.56874
+margin_top = 1.99187
+margin_right = 47.5687
+margin_bottom = 23.9919
+rect_scale = Vector2( -0.032432, -0.0258492 )
+action_mode = 0
+text = "  Sair"
+align = 2
 
-[node name="Alma2" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 80, 350 )
-texture = ExtResource( 16 )
-offset = Vector2( -5.00255, -5.41876 )
-hframes = 5
-frame = 1
-
-[node name="Alma3" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 80, 350 )
-texture = ExtResource( 16 )
-offset = Vector2( 8.03479, -5.26178 )
-hframes = 5
-frame = 1
-
-[node name="Alma4" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 80, 350 )
-texture = ExtResource( 16 )
-offset = Vector2( 21.0509, -5.41876 )
-hframes = 5
-frame = 1
-
-[node name="Alma5" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 80, 350 )
-texture = ExtResource( 16 )
-offset = Vector2( 34.0882, -5.26178 )
-hframes = 5
-frame = 1
-
-[node name="Alma6" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 131.946, 350 )
-texture = ExtResource( 16 )
-offset = Vector2( -5.00255, -5.41876 )
-hframes = 5
-frame = 1
-
-[node name="Alma7" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 118.96, 350 )
-texture = ExtResource( 16 )
-offset = Vector2( 21.0509, -5.41876 )
-hframes = 5
-frame = 1
-
-[node name="Alma8" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 118.96, 349.865 )
-texture = ExtResource( 16 )
-offset = Vector2( 34.0882, -5.26178 )
-hframes = 5
-frame = 1
-
-[node name="Alma9" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 158.054, 349.865 )
-texture = ExtResource( 16 )
-offset = Vector2( 8.03479, -5.26178 )
-hframes = 5
-frame = 1
-
-[node name="Alma10" type="Sprite" parent="CanvasLayer"]
-position = Vector2( 171.041, 349.865 )
-texture = ExtResource( 16 )
-offset = Vector2( 8.03479, -5.26178 )
-hframes = 5
-frame = 1
+[node name="Label2" type="Label" parent="UI/Pause/ColorRect"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -14.9347
+margin_top = -14.4001
+margin_right = 69.0653
+margin_bottom = 16.5999
+rect_scale = Vector2( -0.0310841, -0.0637544 )
+text = "
+      Pause"
+valign = 1
+[connection signal="button_down" from="UI/Lose/Menu" to="." method="_on_Menu_button_down"]
+[connection signal="button_down" from="UI/Lose/Quit" to="." method="_on_Quit_button_down"]
+[connection signal="button_down" from="UI/Win/Menu" to="." method="_on_Menu_button_down"]
+[connection signal="button_down" from="UI/Win/Quit" to="." method="_on_Quit_button_down"]
+[connection signal="button_down" from="UI/Pause/ColorRect/Menu" to="." method="_on_Menu_button_down"]
+[connection signal="button_down" from="UI/Pause/ColorRect/Voltar" to="." method="_on_Voltar_button_down"]
+[connection signal="button_down" from="UI/Pause/ColorRect/Quit" to="." method="_on_Quit_button_down"]
